@@ -6,12 +6,9 @@
   <title>Simple Landing Page</title>
   <link href="https://api.mapbox.com/mapbox-gl-js/v3.17.0/mapbox-gl.css" rel="stylesheet">
   <script src="https://api.mapbox.com/mapbox-gl-js/v3.17.0/mapbox-gl.js"></script>
+
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: Arial, Helvetica, sans-serif;
@@ -29,15 +26,8 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     }
 
-    header h1 {
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    header p {
-      font-size: 1rem;
-      color: #555;
-    }
+    header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+    header p { font-size: 1rem; color: #555; }
 
     .map-container {
       display: flex;
@@ -46,75 +36,47 @@
       padding: 2rem;
       width:100%;
       height:100vh;
-    
     }
 
-   #map {  width:100%; height:100%; border-radius: 20px;}/*position: static; top: 25%; bottom: 0; width: 50%; height:50%;*/
+    #map { width:100%; height:100%; border-radius: 20px; }
 
-   /* Events Section */
-.events {
-padding: 4rem 2rem;
-background: #ffffff;
-}
+    /* Events Section */
+    .events { padding: 4rem 2rem; background: #ffffff; }
+    .events h2 { text-align: center; font-size: 2rem; margin-bottom: 2.5rem; }
 
+    .event-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
 
-.events h2 {
-text-align: center;
-font-size: 2rem;
-margin-bottom: 2.5rem;
-}
+    .event-card {
+      background: #f9f9f9;
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
 
+    .event-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+    }
 
-.event-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-gap: 2rem;
-max-width: 1200px;
-margin: 0 auto;
-}
+    .event-image {
+      width: 100%;
+      height: 160px;
+      background: linear-gradient(135deg, #cfcfcf, #e6e6e6);
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
 
+    .event-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+    .event-card .date { font-size: 0.9rem; color: #777; margin-bottom: 0.75rem; }
+    .event-card .description { font-size: 0.95rem; color: #444; }
 
-.event-card {
-background: #f9f9f9;
-border-radius: 16px;
-padding: 1.5rem;
-box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-
-.event-card:hover {
-transform: translateY(-6px);
-box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
-}
-
-
-.event-image {
-width: 100%;
-height: 160px;
-background: linear-gradient(135deg, #cfcfcf, #e6e6e6);
-border-radius: 12px;
-margin-bottom: 1rem;
-}
-
-
-.event-card h3 {
-font-size: 1.25rem;
-margin-bottom: 0.5rem;
-}
-
-
-.event-card .date {
-font-size: 0.9rem;
-color: #777;
-margin-bottom: 0.75rem;
-}
-
-
-.event-card .description {
-font-size: 0.95rem;
-color: #444;
-}
     footer {
       padding: 1rem;
       text-align: center;
@@ -123,102 +85,197 @@ color: #444;
       background: #ffffff;
       box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
     }
+
+    /* ---------------- Marker styling ---------------- */
+    .custom-marker-img {
+      width: 34px;
+      height: 34px;
+      border-radius: 999px;
+      border: 2px solid #111;
+      object-fit: cover;
+      cursor: pointer;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+      background: #fff;
+    }
+
+    .custom-marker-dot {
+      width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      border: 2px solid #111;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+      cursor: pointer;
+      background: #2b6cff; /* element markers will be styled per marker in JS too */
+    }
+
+    .custom-marker-pin {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      transform: rotate(45deg);
+      border: 2px solid #111;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.18);
+      cursor: pointer;
+      background: #ff4d4d;
+    }
   </style>
 </head>
+
 <body>
   <header>
     <h1>MapBox Test</h1>
     <p>A simple landing page with a map</p>
   </header>
 
- <section class="map-container">
- <div id="map"></div>
- </section>
+  <section class="map-container">
+    <div id="map"></div>
+  </section>
 
+  <!-- Events Section -->
+  <section class="events">
+    <h2>Upcoming Events</h2>
+    <div class="event-grid" id="event-grid">
+      <div class="event-card">
+        <div class="event-image"></div>
+        <h3>Event One</h3>
+        <p class="date">March 20, 2025</p>
+        <p class="description">Short description of the event goes here.</p>
+      </div>
 
+      <div class="event-card">
+        <div class="event-image"></div>
+        <h3>Event Two</h3>
+        <p class="date">April 5, 2025</p>
+        <p class="description">Another short description for this event.</p>
+      </div>
 
-<!-- Events Section -->
-<section class="events">
-    
-<h2>Upcoming Events</h2>
-<div class="event-grid">
-<div class="event-card">
-<div class="event-image"></div>
-<h3>Event One</h3>
-<p class="date">March 20, 2025</p>
-<p class="description">Short description of the event goes here.</p>
-</div>
-
-
-<div class="event-card">
-<div class="event-image"></div>
-<h3>Event Two</h3>
-<p class="date">April 5, 2025</p>
-<p class="description">Another short description for this event.</p>
-</div>
-
-
-<div class="event-card">
-<div class="event-image"></div>
-<h3>Event Three</h3>
-<p class="date">May 12, 2025</p>
-<p class="description">Details about the third event.</p>
-</div>
-</div>
-
-<div class="event-card">
-<div class="event-image"></div>
-<h3>Event Three</h3>
-<p class="date">May 12, 2025</p>
-<p class="description">Details about the third event.</p>
-</div>
-</div>
-</section>
-
-
-
+      <div class="event-card">
+        <div class="event-image"></div>
+        <h3>Event Three</h3>
+        <p class="date">May 12, 2025</p>
+        <p class="description">Details about the third event.</p>
+      </div>
+    </div>
+  </section>
 
   <footer>
     © 2025 Your Name · All rights reserved
   </footer>
 
   <script>
-	// TO MAKE THE MAP APPEAR YOU MUST
-	// ADD YOUR ACCESS TOKEN FROM
-	// https://account.mapbox.com
     mapboxgl.accessToken = "pk.eyJ1Ijoic2ViYXN0aWFucmV5bmEiLCJhIjoiY21qMzd3YXQ5MTRvdzNlcHZxcGc3cjAxNCJ9.wPxfrdtV25plDeVFOnyIOA";
+
+    const nyBounds = [
+      [-79.76, 40.49], // Southwest corner
+      [-71.85, 45.01]  // Northeast corner
+    ];
+
     const map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/standard', // Use the standard style for the map
-        projection: 'globe', // display the map as a globe
-        zoom: 1, // initial zoom level, 0 is the world view, higher values zoom in
-        center: [30, 15] // center the map on this longitude and latitude
+      container: 'map',
+      style: 'mapbox://styles/mapbox/standard',
+      projection: 'globe',
+      zoom: 10,
+      center: [-73.96801, 40.77724],
+      maxBounds: nyBounds,
     });
 
     map.addControl(new mapboxgl.NavigationControl());
     map.scrollZoom.disable();
 
+    // ---------------------------------------------------------------------------
+    // Helper: create a hover-popup marker (works for both image markers and element markers)
+    function addHoverMarker({ lngLat, element, title }) {
+      const popup = new mapboxgl.Popup({
+        closeButton: false,
+        closeOnClick: false,
+        offset: 18
+      }).setText(title);
+
+      element.addEventListener('mouseenter', () => popup.addTo(map).setLngLat(lngLat));
+      element.addEventListener('mouseleave', () => popup.remove());
+
+      return new mapboxgl.Marker({ element }).setLngLat(lngLat).addTo(map);
+    }
+
+    // ---------------------------------------------------------------------------
+    // 5 NEW markers around Manhattan/Brooklyn/NYC:
+    // - 3 image markers (placeholder images)
+    // - 2 element markers (custom divs) with hover text
+
+    // --------------- Image marker 1 (Manhattan - Times Square) ---------------
+    const img1 = document.createElement('img');
+    img1.className = 'custom-marker-img';
+    img1.src = 'image3.png'; // placeholder image
+    img1.alt = "Times Square";
+    addHoverMarker({
+      lngLat: [-73.98513, 40.75890],
+      element: img1,
+      title: 'Times Square (Manhattan)'
+    });
+
+    // --------------- Image marker 2 (Manhattan - Central Park) ---------------
+    const img2 = document.createElement('img');
+    img2.className = 'custom-marker-img';
+    img2.src = 'image.png'; // placeholder image
+    img2.alt = "Central Park";
+    addHoverMarker({
+      lngLat: [-73.96536, 40.78286],
+      element: img2,
+      title: 'Central Park (Manhattan)'
+    });
+
+    // --------------- Image marker 3 (Brooklyn - Brooklyn Bridge Park) ---------------
+    const img3 = document.createElement('img');
+    img3.className = 'custom-marker-img';
+    img3.src = 'image2.png'; // placeholder image
+    img3.alt = "Brooklyn Bridge Park";
+    addHoverMarker({
+      lngLat: [-73.99686, 40.70029],
+      element: img3,
+      title: 'Brooklyn Bridge Park (Brooklyn)'
+    });
+
+    // --------------- Element marker 4 (Brooklyn - Prospect Park) ---------------
+    const el4 = document.createElement('div');
+    el4.className = 'custom-marker-dot';
+    el4.style.background = '#16a34a'; // green
+    addHoverMarker({
+      lngLat: [-73.96800, 40.66020],
+      element: el4,
+      title: 'Prospect Park (Brooklyn)'
+    });
+
+    // --------------- Element marker 5 (Queens - Long Island City / Gantry Plaza) ---------------
+    const el5 = document.createElement('div');
+    el5.className = 'custom-marker-pin';
+    // (pin already has background in CSS, but you can override here if you want)
+    el5.style.background = '#a855f7'; // purple
+    addHoverMarker({
+      lngLat: [-73.95800, 40.74460],
+      element: el5,
+      title: 'Gantry Plaza State Park (Queens / LIC)'
+    });
+
+    // ---------------------------------------------------------------------------
     map.on('style.load', () => {
-        map.setFog({}); // Set the default atmosphere style
+      map.setFog({});
     });
 
-fetch("https://www.eventbriteapi.com/v3/users/me/events/", {
-  headers: {
-    Authorization: "Bearer "
-  }
-})
-  .then(res => res.json())
-  .then(data => {
-    console.log(data);
-    // Example: render events
-    data.events.forEach(event => {
-      console.log(event.name.text);
+    // NOTE: You had code below that will error because `polygons` is not defined and
+    // map.addInteraction expects a valid layer id. I’m commenting it out to keep the page working.
+    /*
+    map.addInteraction('my-polygon-click-interaction', {
+      type: 'click',
+      target: { layerId: polygons },
+      handler: (e) => {
+        map.setFeatureState(e.feature, {highlight: true});
+      }
     });
-  })
-  .catch(err => console.error(err));
+    */
 
-</script>
-
-
+    // NOTE: This was appending your marker image into the event grid (not what you want for markers).
+    // const background = document.getElementById("event-grid");
+    // background.appendChild(el);
+  </script>
 </body>
 </html>
