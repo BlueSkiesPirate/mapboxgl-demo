@@ -118,10 +118,13 @@
       cursor: pointer;
       background: #ff4d4d;
     }
+    .red{
+      background-color: red;
+    }
   </style>
 </head>
 
-<body>
+<body id="background">
   <header>
     <h1>MapBox Test</h1>
     <p>A simple landing page with a map</p>
@@ -182,6 +185,7 @@
     map.addControl(new mapboxgl.NavigationControl());
     map.scrollZoom.disable();
 
+    const background = document.getElementById("background");
     // ---------------------------------------------------------------------------
     // Helper: create a hover-popup marker (works for both image markers and element markers)
     function addHoverMarker({ lngLat, element, title }) {
@@ -193,6 +197,7 @@
 
       element.addEventListener('mouseenter', () => popup.addTo(map).setLngLat(lngLat));
       element.addEventListener('mouseleave', () => popup.remove());
+      element.addEventListener("click", () => background.classList.toggle("red"))
 
       return new mapboxgl.Marker({ element }).setLngLat(lngLat).addTo(map);
     }
