@@ -33,49 +33,131 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
       padding: 2rem;
       width:100%;
       height:100vh;
+      gap: 12px;
     }
 
     #map { width:100%; height:100%; border-radius: 20px; }
 
-    /* Events Section */
-    .events { padding: 4rem 2rem; background: #ffffff; }
-    .events h2 { text-align: center; font-size: 2rem; margin-bottom: 2.5rem; }
-
-    .event-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
+    /* ---- marker (your existing animated marker) ---- */
+    .marker {
+      position: relative;
+      background-size: contain;
+      background-position-x: 50%;
+      background-repeat: no-repeat;
+      border-radius: 50%;
+      cursor: pointer;
+      transition-property: width, height;
+      transition-duration: 0.1s;
+      transition-timing-function: linear;
+      animation:
+        pop-in 0.3s ease-out forwards,
+        wobble 1.5s ease-in-out 0.3s forwards;
+      transform-origin: bottom center;
     }
 
-    .event-card {
-      background: #f9f9f9;
-      border-radius: 16px;
-      padding: 1.5rem;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    .marker::before {
+      content: '';
+      width: 0;
+      height: 0;
+      border-left: 7px solid transparent;
+      border-right: 7px solid transparent;
+      border-top: 7px solid #365874;
+      display: block;
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
     }
 
-    .event-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.15);
+    @keyframes pop-in {
+      0% { width: 0px; height: 0px; opacity: 0; box-shadow: none; }
+      70% { width: 55px; height: 55px; opacity: 1; box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.4); }
+      85% { width: 48px; height: 48px; box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.3); }
+      100% { width: 50px; height: 50px; box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.3); }
     }
 
-    .event-image {
-      width: 100%;
-      height: 160px;
-      background: linear-gradient(135deg, #cfcfcf, #e6e6e6);
-      border-radius: 12px;
-      margin-bottom: 1rem;
+    @keyframes wobble {
+      0% { transform: rotate(0deg); }
+      20% { transform: rotate(2.5deg); }
+      50% { transform: rotate(-2deg); }
+      65% { transform: rotate(1deg); }
+      100% { transform: rotate(0deg); }
+    }
+#map-data{
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+#legend{
+  width:200px;
+  background: #fff;
+  padding: 10px 14px;
+  border-radius: 14px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+}
+    /* ---- filters UI ---- */
+    #filters-container{
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      background: #fff;
+      padding: 10px 14px;
+      border-radius: 14px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+      width: fit-content;
+    }
+    #filters-container h1{
+      font-size: 16px;
+      margin-right: 6px;
+    }
+    .filter {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .filter h2{
+      font-size: 14px;
+      font-weight: 600;
+    }
+    .btn-dot{
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+      border: 2px solid #111;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    }
+    #purpleBtn{ background-color: #63054e; }
+    #redBtn{ background-color: #ff4d4d; }
+    #blueBtn{ background-color: #2b6cff; }
+
+    .legend_type_container{
+display: flex;
+    }
+    #redCircle{
+ background-color: #ff4d4d;
     }
 
-    .event-card h3 { font-size: 1.25rem; margin-bottom: 0.5rem; }
-    .event-card .date { font-size: 0.9rem; color: #777; margin-bottom: 0.75rem; }
-    .event-card .description { font-size: 0.95rem; color: #444; }
+    #blueCircle{
+background-color: #2b6cff;
+    }
+
+    .legend-type{
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      border: 2px solid #111;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.12);
+    }
+    /* optional: show which filter is active */
+    .active-filter{
+      outline: 3px solid rgba(0,0,0,0.15);
+      outline-offset: 3px;
+    }
 
     footer {
       padding: 1rem;
@@ -84,42 +166,6 @@
       color: #777;
       background: #ffffff;
       box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    /* ---------------- Marker styling ---------------- */
-    .custom-marker-img {
-      width: 34px;
-      height: 34px;
-      border-radius: 999px;
-      border: 2px solid #111;
-      object-fit: cover;
-      cursor: pointer;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.18);
-      background: #fff;
-    }
-
-    .custom-marker-dot {
-      width: 16px;
-      height: 16px;
-      border-radius: 999px;
-      border: 2px solid #111;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.18);
-      cursor: pointer;
-      background: #2b6cff; /* element markers will be styled per marker in JS too */
-    }
-
-    .custom-marker-pin {
-      width: 18px;
-      height: 18px;
-      border-radius: 6px;
-      transform: rotate(45deg);
-      border: 2px solid #111;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.18);
-      cursor: pointer;
-      background: #ff4d4d;
-    }
-    .red{
-      background-color: red;
     }
   </style>
 </head>
@@ -132,32 +178,34 @@
 
   <section class="map-container">
     <div id="map"></div>
-  </section>
 
-  <!-- Events Section -->
-  <section class="events">
-    <h2>Upcoming Events</h2>
-    <div class="event-grid" id="event-grid">
-      <div class="event-card">
-        <div class="event-image"></div>
-        <h3>Event One</h3>
-        <p class="date">March 20, 2025</p>
-        <p class="description">Short description of the event goes here.</p>
+<div id="map-data">
+
+
+    <div id="legend">
+      <h3>legend</h3>
+     <div class="legend_type_container"> <P>partners: </P><div id="redCircle" class="legend-type" title="Show partners"></div></div>
+     <div class="legend_type_container"> <P>resources: </P><div id="blueCircle" class="legend-type" title="Show partners"></div></div>
+    </div>
+
+    <div id="filters-container">
+      <h1>Filters</h1>
+
+      <div class="filter">
+        <h2>Show all</h2>
+        <div id="purpleBtn" class="btn-dot active-filter" title="Show all"></div>
       </div>
 
-      <div class="event-card">
-        <div class="event-image"></div>
-        <h3>Event Two</h3>
-        <p class="date">April 5, 2025</p>
-        <p class="description">Another short description for this event.</p>
+      <div class="filter">
+        <h2>Show partners</h2>
+        <div id="redBtn" class="btn-dot" title="Show partners"></div>
       </div>
 
-      <div class="event-card">
-        <div class="event-image"></div>
-        <h3>Event Three</h3>
-        <p class="date">May 12, 2025</p>
-        <p class="description">Details about the third event.</p>
+      <div class="filter">
+        <h2>Show resources</h2>
+        <div id="blueBtn" class="btn-dot" title="Show resources"></div>
       </div>
+    </div>
     </div>
   </section>
 
@@ -166,11 +214,11 @@
   </footer>
 
   <script>
-    mapboxgl.accessToken = "pk.eyJ1Ijoic2ViYXN0aWFucmV5bmEiLCJhIjoiY21qMzd3YXQ5MTRvdzNlcHZxcGc3cjAxNCJ9.wPxfrdtV25plDeVFOnyIOA";
-
+    mapboxgl.accessToken = "pk.eyJ1Ijoic2ViYXN0aWFucmV5bmEiLCJhIjoiY21qMzd3YXQ5MTRvdzNlcHZxcGc3cjAxNCJ9.wPxfrdtV25plDeVFOnyIOA"; // put your token back here
+//"";
     const nyBounds = [
-      [-79.76, 40.49], // Southwest corner
-      [-71.85, 45.01]  // Northeast corner
+      [-79.76, 40.49],
+      [-71.85, 45.01]
     ];
 
     const map = new mapboxgl.Map({
@@ -185,102 +233,144 @@
     map.addControl(new mapboxgl.NavigationControl());
     map.scrollZoom.disable();
 
-    const background = document.getElementById("background");
+    // ----------------------------
+    // MARKER REGISTRY + FILTERING
+    // ----------------------------
+    // we'll store markers so we can show/hide them later
+    const markerRegistry = []; // [{ marker, popup, lngLat, type, element }]
+
+    function setMarkerVisible(item, visible) {
+      // hide/show via CSS so we don't destroy the marker
+      item.element.style.display = visible ? '' : 'none';
+      // make sure hover popup doesn't linger if we hide
+      if (!visible && item.popup) item.popup.remove();
+    }
+
+    function applyFilter(type) {
+      // type: 'all' | 'partner' | 'resource'
+      markerRegistry.forEach(item => {
+        const shouldShow = (type === 'all') || (item.type === type);
+        setMarkerVisible(item, shouldShow);
+      });
+    }
+
+    function setActiveBtn(activeId) {
+      document.querySelectorAll('.btn-dot').forEach(b => b.classList.remove('active-filter'));
+      document.getElementById(activeId).classList.add('active-filter');
+    }
+
     // ---------------------------------------------------------------------------
-    // Helper: create a hover-popup marker (works for both image markers and element markers)
-    function addHoverMarker({ lngLat, element, title }) {
+    // Helper: create a hover-popup marker + register with a type (partner/resource)
+    function addHoverMarker({ lngLat, element, title, type, address }) {
       const popup = new mapboxgl.Popup({
         closeButton: false,
         closeOnClick: false,
         offset: 18
-      }).setText(title);
+      }).setHTML(`<h2>${title}, ${type} </h2><h3>${address}</h3>`);
 
       element.addEventListener('mouseenter', () => popup.addTo(map).setLngLat(lngLat));
       element.addEventListener('mouseleave', () => popup.remove());
-      element.addEventListener("click", () => background.classList.toggle("red"))
+      if (type == "resource"){
+        element.firstChild.style.border ="2px solid #2b6cff";
+      }else{
+         element.firstChild.style.border ="2px solid #ff4d4d";
+      }
+      const marker = new mapboxgl.Marker({ element }).setLngLat(lngLat).addTo(map);
 
-      return new mapboxgl.Marker({ element }).setLngLat(lngLat).addTo(map);
+      markerRegistry.push({ marker, popup, lngLat, type, element });
+      return marker;
     }
 
     // ---------------------------------------------------------------------------
-    // 5 NEW markers around Manhattan/Brooklyn/NYC:
-    // - 3 image markers (placeholder images)
-    // - 2 element markers (custom divs) with hover text
+    // EXAMPLE MARKERS 
+    // partner marker
+    const wrap1 = document.createElement('div');
+    const m1 = document.createElement('div');
+    m1.className = "marker";
+    m1.style.backgroundImage = "url('./img1.png')";
+    wrap1.appendChild(m1);
 
-    // --------------- Image marker 1 (Manhattan - Times Square) ---------------
-    const img1 = document.createElement('img');
-    img1.className = 'custom-marker-img';
-    img1.src = 'image3.png'; // placeholder image
-    img1.alt = "Times Square";
     addHoverMarker({
-      lngLat: [-73.98513, 40.75890],
-      element: img1,
-      title: 'Times Square (Manhattan)'
+      lngLat: [-73.98513, 40.75890], // Times Sq
+      element: wrap1,
+      title: 'Place one',
+      type: 'partner',
+      address: "123 banana Street"
     });
 
-    // --------------- Image marker 2 (Manhattan - Central Park) ---------------
-    const img2 = document.createElement('img');
-    img2.className = 'custom-marker-img';
-    img2.src = 'image.png'; // placeholder image
-    img2.alt = "Central Park";
+    // resource marker
+    const wrap3 = document.createElement('div');
+    const m3 = document.createElement('div');
+    m3.className = "marker";
+    m3.style.backgroundImage = "url('./img2.png')";
+    wrap3.appendChild(m3);
+
     addHoverMarker({
-      lngLat: [-73.96536, 40.78286],
-      element: img2,
-      title: 'Central Park (Manhattan)'
+      lngLat: [-73.78513, 40.75890],
+      element: wrap3,
+      title: 'Place two',
+       type: 'partner',
+      address: "123 banana Street"
     });
 
-    // --------------- Image marker 3 (Brooklyn - Brooklyn Bridge Park) ---------------
-    const img3 = document.createElement('img');
-    img3.className = 'custom-marker-img';
-    img3.src = 'image2.png'; // placeholder image
-    img3.alt = "Brooklyn Bridge Park";
+
+        // resource marker
+    const wrap4 = document.createElement('div');
+    const m4 = document.createElement('div');
+    m4.className = "marker";
+    m4.style.backgroundImage = "url('./img3.png')";
+    wrap4.appendChild(m4);
+
     addHoverMarker({
-      lngLat: [-73.99686, 40.70029],
-      element: img3,
-      title: 'Brooklyn Bridge Park (Brooklyn)'
+      lngLat: [-73.86513, 40.75890],
+      element: wrap4,
+      title: 'Place three',
+       type: 'resource',
+      address: "123 banana Street"
     });
 
-    // --------------- Element marker 4 (Brooklyn - Prospect Park) ---------------
-    const el4 = document.createElement('div');
-    el4.className = 'custom-marker-dot';
-    el4.style.background = '#16a34a'; // green
+        // resource marker
+    const wrap2 = document.createElement('div');
+    const m2 = document.createElement('div');
+    m2.className = "marker";
+    m2.style.backgroundImage = "url('./img4.png')";
+    wrap2.appendChild(m2);
+
     addHoverMarker({
-      lngLat: [-73.96800, 40.66020],
-      element: el4,
-      title: 'Prospect Park (Brooklyn)'
+      lngLat: [-73.88513, 40.75890],
+      element: wrap2,
+      title: 'Place four',
+      type: 'resource',
+      address: "123 banana Street"
+    });
+    // ---------------------------------------------------------------------------
+    // FILTER BUTTONS
+    const purpleBtn = document.getElementById('purpleBtn');
+    const redBtn = document.getElementById('redBtn');
+    const blueBtn = document.getElementById('blueBtn');
+
+    purpleBtn.addEventListener('click', () => {
+      setActiveBtn('purpleBtn');
+      applyFilter('all');
     });
 
-    // --------------- Element marker 5 (Queens - Long Island City / Gantry Plaza) ---------------
-    const el5 = document.createElement('div');
-    el5.className = 'custom-marker-pin';
-    // (pin already has background in CSS, but you can override here if you want)
-    el5.style.background = '#a855f7'; // purple
-    addHoverMarker({
-      lngLat: [-73.95800, 40.74460],
-      element: el5,
-      title: 'Gantry Plaza State Park (Queens / LIC)'
+    redBtn.addEventListener('click', () => {
+      setActiveBtn('redBtn');
+      applyFilter('partner');
     });
+
+    blueBtn.addEventListener('click', () => {
+      setActiveBtn('blueBtn');
+      applyFilter('resource');
+    });
+
+    // start on "all"
+    applyFilter('all');
 
     // ---------------------------------------------------------------------------
     map.on('style.load', () => {
       map.setFog({});
     });
-
-    // NOTE: You had code below that will error because `polygons` is not defined and
-    // map.addInteraction expects a valid layer id. I’m commenting it out to keep the page working.
-    /*
-    map.addInteraction('my-polygon-click-interaction', {
-      type: 'click',
-      target: { layerId: polygons },
-      handler: (e) => {
-        map.setFeatureState(e.feature, {highlight: true});
-      }
-    });
-    */
-
-    // NOTE: This was appending your marker image into the event grid (not what you want for markers).
-    // const background = document.getElementById("event-grid");
-    // background.appendChild(el);
   </script>
 </body>
 </html>
