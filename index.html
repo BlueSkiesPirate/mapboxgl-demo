@@ -42,7 +42,6 @@
 
     #map { width:100%; height:100%; border-radius: 20px; }
 
-    /* ---- marker (your existing animated marker) ---- */
     .marker {
       position: relative;
       background-size: contain;
@@ -87,19 +86,21 @@
       65% { transform: rotate(1deg); }
       100% { transform: rotate(0deg); }
     }
-#map-data{
-  display: flex;
-  justify-content: space-around;
-  width: 100%;
-}
-#legend{
-  width:200px;
-  background: #fff;
-  padding: 10px 14px;
-  border-radius: 14px;
-  box-shadow: 0 8px 22px rgba(0,0,0,0.08);
-}
-    /* ---- filters UI ---- */
+
+    #map-data{
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+    }
+
+    #legend{
+      width:200px;
+      background: #fff;
+      padding: 10px 14px;
+      border-radius: 14px;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+    }
+
     #filters-container{
       display: flex;
       align-items: center;
@@ -110,19 +111,23 @@
       box-shadow: 0 8px 22px rgba(0,0,0,0.08);
       width: fit-content;
     }
+
     #filters-container h1{
       font-size: 16px;
       margin-right: 6px;
     }
+
     .filter {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
     .filter h2{
       font-size: 14px;
       font-weight: 600;
     }
+
     .btn-dot{
       border-radius: 50%;
       width: 18px;
@@ -131,20 +136,22 @@
       border: 2px solid #111;
       box-shadow: 0 6px 14px rgba(0,0,0,0.12);
     }
+
     #purpleBtn{ background-color: #63054e; }
     #redBtn{ background-color: #ff4d4d; }
     #blueBtn{ background-color: #2b6cff; }
+    #yellowBtn{ background-color: gold; } /* ✅ add a real yellow button id */
 
     .legend_type_container{
-display: flex;
-    }
-    #redCircle{
- background-color: #ff4d4d;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-top: 6px;
     }
 
-    #blueCircle{
-background-color: #2b6cff;
-    }
+    #redCircle{ background-color: #ff4d4d; }
+    #blueCircle{ background-color: #2b6cff; }
+    #yellowCircle{ background-color: gold; } /* ✅ kits legend dot */
 
     .legend-type{
       border-radius: 50%;
@@ -153,7 +160,7 @@ background-color: #2b6cff;
       border: 2px solid #111;
       box-shadow: 0 6px 14px rgba(0,0,0,0.12);
     }
-    /* optional: show which filter is active */
+
     .active-filter{
       outline: 3px solid rgba(0,0,0,0.15);
       outline-offset: 3px;
@@ -179,43 +186,53 @@ background-color: #2b6cff;
   <section class="map-container">
     <div id="map"></div>
 
-<div id="map-data">
-
-
-    <div id="legend">
-      <h3>legend</h3>
-     <div class="legend_type_container"> <P>partners: </P><div id="redCircle" class="legend-type" title="Show partners"></div></div>
-     <div class="legend_type_container"> <P>resources: </P><div id="blueCircle" class="legend-type" title="Show partners"></div></div>
-    </div>
-
-    <div id="filters-container">
-      <h1>Filters</h1>
-
-      <div class="filter">
-        <h2>Show all</h2>
-        <div id="purpleBtn" class="btn-dot active-filter" title="Show all"></div>
+    <div id="map-data">
+      <div id="legend">
+        <h3>legend</h3>
+        <div class="legend_type_container">
+          <p>partners:</p><div id="redCircle" class="legend-type" title="partners"></div>
+        </div>
+        <div class="legend_type_container">
+          <p>resources:</p><div id="blueCircle" class="legend-type" title="resources"></div>
+        </div>
+        <div class="legend_type_container">
+          <p>kits:</p><div id="yellowCircle" class="legend-type" title="kits"></div>
+        </div>
       </div>
 
-      <div class="filter">
-        <h2>Show partners</h2>
-        <div id="redBtn" class="btn-dot" title="Show partners"></div>
-      </div>
+      <div id="filters-container">
+        <h1>Filters</h1>
 
-      <div class="filter">
-        <h2>Show resources</h2>
-        <div id="blueBtn" class="btn-dot" title="Show resources"></div>
+        <div class="filter">
+          <h2>Show all</h2>
+          <div id="purpleBtn" class="btn-dot active-filter" title="Show all"></div>
+        </div>
+
+        <div class="filter">
+          <h2>Show partners</h2>
+          <div id="redBtn" class="btn-dot" title="Show partners"></div>
+        </div>
+
+        <div class="filter">
+          <h2>Show resources</h2>
+          <div id="blueBtn" class="btn-dot" title="Show resources"></div>
+        </div>
+
+        <div class="filter">
+          <h2>Show kits</h2>
+          <div id="yellowBtn" class="btn-dot" title="Show kits"></div> <!-- ✅ fix id + label -->
+        </div>
       </div>
-    </div>
     </div>
   </section>
 
   <footer>
-    © 2025 Your Name · All rights reserved
+    © 2026 · All rights reserved
   </footer>
 
   <script>
-    mapboxgl.accessToken = "pk.eyJ1Ijoic2ViYXN0aWFucmV5bmEiLCJhIjoiY21qMzd3YXQ5MTRvdzNlcHZxcGc3cjAxNCJ9.wPxfrdtV25plDeVFOnyIOA"; // put your token back here
-//"";
+    mapboxgl.accessToken = "pk.eyJ1Ijoic2ViYXN0aWFucmV5bmEiLCJhIjoiY21qMzd3YXQ5MTRvdzNlcHZxcGc3cjAxNCJ9.wPxfrdtV25plDeVFOnyIOA";
+
     const nyBounds = [
       [-79.76, 40.49],
       [-71.85, 45.01]
@@ -233,21 +250,15 @@ background-color: #2b6cff;
     map.addControl(new mapboxgl.NavigationControl());
     map.scrollZoom.disable();
 
-    // ----------------------------
-    // MARKER REGISTRY + FILTERING
-    // ----------------------------
-    // we'll store markers so we can show/hide them later
     const markerRegistry = []; // [{ marker, popup, lngLat, type, element }]
 
     function setMarkerVisible(item, visible) {
-      // hide/show via CSS so we don't destroy the marker
       item.element.style.display = visible ? '' : 'none';
-      // make sure hover popup doesn't linger if we hide
       if (!visible && item.popup) item.popup.remove();
     }
 
     function applyFilter(type) {
-      // type: 'all' | 'partner' | 'resource'
+      // ✅ now supports: 'all' | 'partner' | 'resource' | 'kit'
       markerRegistry.forEach(item => {
         const shouldShow = (type === 'all') || (item.type === type);
         setMarkerVisible(item, shouldShow);
@@ -259,31 +270,35 @@ background-color: #2b6cff;
       document.getElementById(activeId).classList.add('active-filter');
     }
 
-    // ---------------------------------------------------------------------------
-    // Helper: create a hover-popup marker + register with a type (partner/resource)
     function addHoverMarker({ lngLat, element, title, type, address }) {
       const popup = new mapboxgl.Popup({
         closeButton: false,
         closeOnClick: false,
         offset: 18
-      }).setHTML(`<h2>${title}, ${type} </h2><h3>${address}</h3>`);
+      }).setHTML(`<h2>${title} (${type})</h2><h3>${address}</h3>`);
 
       element.addEventListener('mouseenter', () => popup.addTo(map).setLngLat(lngLat));
       element.addEventListener('mouseleave', () => popup.remove());
-      if (type == "resource"){
-        element.firstChild.style.border ="2px solid #2b6cff";
-      }else{
-         element.firstChild.style.border ="2px solid #ff4d4d";
-      }
-      const marker = new mapboxgl.Marker({ element }).setLngLat(lngLat).addTo(map);
 
+      // ✅ border color by type
+      if (type === "resource") {
+        element.firstChild.style.border = "2px solid #2b6cff";
+      } else if (type === "partner") {
+        element.firstChild.style.border = "2px solid #ff4d4d";
+      } else if (type === "kit") {
+        element.firstChild.style.border = "2px solid gold";
+      } else {
+        element.firstChild.style.border = "2px solid #111";
+      }
+
+      const marker = new mapboxgl.Marker({ element }).setLngLat(lngLat).addTo(map);
       markerRegistry.push({ marker, popup, lngLat, type, element });
       return marker;
     }
 
-    // ---------------------------------------------------------------------------
-    // EXAMPLE MARKERS 
-    // partner marker
+    // ---------------------------
+    // MARKERS
+    // ---------------------------
     const wrap1 = document.createElement('div');
     const m1 = document.createElement('div');
     m1.className = "marker";
@@ -291,14 +306,13 @@ background-color: #2b6cff;
     wrap1.appendChild(m1);
 
     addHoverMarker({
-      lngLat: [-73.98513, 40.75890], // Times Sq
+      lngLat: [-73.98513, 40.75890],
       element: wrap1,
       title: 'Place one',
       type: 'partner',
       address: "123 banana Street"
     });
 
-    // resource marker
     const wrap3 = document.createElement('div');
     const m3 = document.createElement('div');
     m3.className = "marker";
@@ -309,27 +323,25 @@ background-color: #2b6cff;
       lngLat: [-73.78513, 40.75890],
       element: wrap3,
       title: 'Place two',
-       type: 'partner',
+      type: 'partner',
       address: "123 banana Street"
     });
 
-
-        // resource marker
     const wrap4 = document.createElement('div');
     const m4 = document.createElement('div');
     m4.className = "marker";
     m4.style.backgroundImage = "url('./img3.png')";
     wrap4.appendChild(m4);
 
+    // ✅ this is your KIT marker
     addHoverMarker({
       lngLat: [-73.86513, 40.75890],
       element: wrap4,
       title: 'Place three',
-       type: 'resource',
+      type: 'kit',
       address: "123 banana Street"
     });
 
-        // resource marker
     const wrap2 = document.createElement('div');
     const m2 = document.createElement('div');
     m2.className = "marker";
@@ -343,11 +355,14 @@ background-color: #2b6cff;
       type: 'resource',
       address: "123 banana Street"
     });
-    // ---------------------------------------------------------------------------
+
+    // ---------------------------
     // FILTER BUTTONS
+    // ---------------------------
     const purpleBtn = document.getElementById('purpleBtn');
     const redBtn = document.getElementById('redBtn');
     const blueBtn = document.getElementById('blueBtn');
+    const yellowBtn = document.getElementById('yellowBtn'); // ✅
 
     purpleBtn.addEventListener('click', () => {
       setActiveBtn('purpleBtn');
@@ -364,10 +379,14 @@ background-color: #2b6cff;
       applyFilter('resource');
     });
 
-    // start on "all"
+    // ✅ kits filter
+    yellowBtn.addEventListener('click', () => {
+      setActiveBtn('yellowBtn');
+      applyFilter('kit');
+    });
+
     applyFilter('all');
 
-    // ---------------------------------------------------------------------------
     map.on('style.load', () => {
       map.setFog({});
     });
