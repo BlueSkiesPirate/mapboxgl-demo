@@ -231,165 +231,190 @@
   </footer>
 
   <script>
-    mapboxgl.accessToken = "pk.eyJ1Ijoic2ViYXN0aWFucmV5bmEiLCJhIjoiY21qMzd3YXQ5MTRvdzNlcHZxcGc3cjAxNCJ9.wPxfrdtV25plDeVFOnyIOA";
+  mapboxgl.accessToken =
+    "pk.eyJ1Ijoic2ViYXN0aWFucmV5bmEiLCJhIjoiY21qMzd3YXQ5MTRvdzNlcHZxcGc3cjAxNCJ9.wPxfrdtV25plDeVFOnyIOA";
 
-    const nyBounds = [
-      [-79.76, 40.49],
-      [-71.85, 45.01]
-    ];
+  // --------------------------------------------------
+  // BOUNDS
+  // --------------------------------------------------
 
-    const map = new mapboxgl.Map({
-      container: 'map',
-      style: 'mapbox://styles/mapbox/standard',
-      projection: 'globe',
-      zoom: 10.1,
-      center: [-73.96801, 40.72490],
-      maxBounds: nyBounds,
+  // Hard pan limits (user cannot pan outside NY region)
+  const maxBounds = [
+    [-79.76, 40.49],
+    [-71.85, 45.01]
+  ];
+
+  // 👇 THIS defines the exact area you always want visible
+  const viewBounds = [
+    [-74.10, 40.58], // southwest
+    [-73.95, 40.87]  // northeast
+  ];
+
+  // Responsive padding so UI doesn’t cover the map
+  function getPadding() {
+    return window.innerWidth < 768
+      ? { top: 20, bottom: 160, left: 20, right: 20 }
+      : { top: 40, bottom: 40, left: 40, right: 40 };
+  }
+
+  // --------------------------------------------------
+  // MAP INIT
+  // --------------------------------------------------
+
+  const map = new mapboxgl.Map({
+    container: "map",
+    style: "mapbox://styles/mapbox/standard",
+    projection: "globe",
+    center: [-73.96801, 40.72490],
+    maxBounds: maxBounds
+  });
+
+  map.addControl(new mapboxgl.NavigationControl());
+  map.scrollZoom.disable();
+
+  map.on("load", () => {
+    map.fitBounds(viewBounds, {
+      padding: getPadding(),
+      duration: 0
     });
 
-    map.addControl(new mapboxgl.NavigationControl());
-    map.scrollZoom.disable();
+    map.setFog({});
+  });
 
-    const markerRegistry = []; // [{ marker, popup, lngLat, type, element }]
+  // Keep the same geographic area on resize
+  window.addEventListener("resize", () => {
+    map.fitBounds(viewBounds, {
+      padding: getPadding(),
+      duration: 0
+    });
+  });
 
-    function setMarkerVisible(item, visible) {
-      item.element.style.display = visible ? '' : 'none';
-      if (!visible && item.popup) item.popup.remove();
+  // --------------------------------------------------
+  // MARKERS + FILTER SYSTEM
+  // --------------------------------------------------
+
+  const markerRegistry = []; // { marker, popup, lngLat, type, element }
+
+  function setMarkerVisible(item, visible) {
+    item.element.style.display = visible ? "" : "none";
+    if (!visible && item.popup) item.popup.remove();
+  }
+
+  function applyFilter(type) {
+    markerRegistry.forEach(item => {
+      const show = type === "all" || item.type === type;
+      setMarkerVisible(item, show);
+    });
+  }
+
+  function setActiveBtn(activeId) {
+    document.querySelectorAll(".btn-dot").forEach(b =>
+      b.classList.remove("active-filter")
+    );
+    document.getElementById(activeId).classList.add("active-filter");
+  }
+
+  function addHoverMarker({ lngLat, element, title, type, address }) {
+    const popup = new mapboxgl.Popup({
+      closeButton: false,
+      closeOnClick: false,
+      offset: 18
+    }).setHTML(`<h2>${title} (${type})</h2><h3>${address}</h3>`);
+
+    element.addEventListener("mouseenter", () =>
+      popup.addTo(map).setLngLat(lngLat)
+    );
+    element.addEventListener("mouseleave", () => popup.remove());
+
+    // Border color by type
+    if (type === "resource") {
+      element.firstChild.style.border = "2px solid #2b6cff";
+    } else if (type === "partner") {
+      element.firstChild.style.border = "2px solid #ff4d4d";
+    } else if (type === "kit") {
+      element.firstChild.style.border = "2px solid gold";
+    } else {
+      element.firstChild.style.border = "2px solid #111";
     }
 
-    function applyFilter(type) {
-      // ✅ now supports: 'all' | 'partner' | 'resource' | 'kit'
-      markerRegistry.forEach(item => {
-        const shouldShow = (type === 'all') || (item.type === type);
-        setMarkerVisible(item, shouldShow);
-      });
-    }
+    const marker = new mapboxgl.Marker({ element })
+      .setLngLat(lngLat)
+      .addTo(map);
 
-    function setActiveBtn(activeId) {
-      document.querySelectorAll('.btn-dot').forEach(b => b.classList.remove('active-filter'));
-      document.getElementById(activeId).classList.add('active-filter');
-    }
+    markerRegistry.push({ marker, popup, lngLat, type, element });
+  }
 
-    function addHoverMarker({ lngLat, element, title, type, address }) {
-      const popup = new mapboxgl.Popup({
-        closeButton: false,
-        closeOnClick: false,
-        offset: 18
-      }).setHTML(`<h2>${title} (${type})</h2><h3>${address}</h3>`);
+  // --------------------------------------------------
+  // MARKERS
+  // --------------------------------------------------
 
-      element.addEventListener('mouseenter', () => popup.addTo(map).setLngLat(lngLat));
-      element.addEventListener('mouseleave', () => popup.remove());
+  function createMarker(img) {
+    const wrap = document.createElement("div");
+    const m = document.createElement("div");
+    m.className = "marker";
+    m.style.backgroundImage = `url('${img}')`;
+    wrap.appendChild(m);
+    return wrap;
+  }
 
-      // ✅ border color by type
-      if (type === "resource") {
-        element.firstChild.style.border = "2px solid #2b6cff";
-      } else if (type === "partner") {
-        element.firstChild.style.border = "2px solid #ff4d4d";
-      } else if (type === "kit") {
-        element.firstChild.style.border = "2px solid gold";
-      } else {
-        element.firstChild.style.border = "2px solid #111";
-      }
+  addHoverMarker({
+    lngLat: [-73.98513, 40.7589],
+    element: createMarker("./img1.png"),
+    title: "Place one",
+    type: "partner",
+    address: "123 banana Street"
+  });
 
-      const marker = new mapboxgl.Marker({ element }).setLngLat(lngLat).addTo(map);
-      markerRegistry.push({ marker, popup, lngLat, type, element });
-      return marker;
-    }
+  addHoverMarker({
+    lngLat: [-73.78513, 40.7589],
+    element: createMarker("./img2.png"),
+    title: "Place two",
+    type: "partner",
+    address: "123 banana Street"
+  });
 
-    // ---------------------------
-    // MARKERS
-    // ---------------------------
-    const wrap1 = document.createElement('div');
-    const m1 = document.createElement('div');
-    m1.className = "marker";
-    m1.style.backgroundImage = "url('./img1.png')";
-    wrap1.appendChild(m1);
+  addHoverMarker({
+    lngLat: [-73.86513, 40.7589],
+    element: createMarker("./img3.png"),
+    title: "Place three",
+    type: "kit",
+    address: "123 banana Street"
+  });
 
-    addHoverMarker({
-      lngLat: [-73.98513, 40.75890],
-      element: wrap1,
-      title: 'Place one',
-      type: 'partner',
-      address: "123 banana Street"
-    });
+  addHoverMarker({
+    lngLat: [-73.88513, 40.7589],
+    element: createMarker("./img4.png"),
+    title: "Place four",
+    type: "resource",
+    address: "123 banana Street"
+  });
 
-    const wrap3 = document.createElement('div');
-    const m3 = document.createElement('div');
-    m3.className = "marker";
-    m3.style.backgroundImage = "url('./img2.png')";
-    wrap3.appendChild(m3);
+  // --------------------------------------------------
+  // FILTER BUTTONS
+  // --------------------------------------------------
 
-    addHoverMarker({
-      lngLat: [-73.78513, 40.75890],
-      element: wrap3,
-      title: 'Place two',
-      type: 'partner',
-      address: "123 banana Street"
-    });
+  document.getElementById("purpleBtn").onclick = () => {
+    setActiveBtn("purpleBtn");
+    applyFilter("all");
+  };
 
-    const wrap4 = document.createElement('div');
-    const m4 = document.createElement('div');
-    m4.className = "marker";
-    m4.style.backgroundImage = "url('./img3.png')";
-    wrap4.appendChild(m4);
+  document.getElementById("redBtn").onclick = () => {
+    setActiveBtn("redBtn");
+    applyFilter("partner");
+  };
 
-    // ✅ this is your KIT marker
-    addHoverMarker({
-      lngLat: [-73.86513, 40.75890],
-      element: wrap4,
-      title: 'Place three',
-      type: 'kit',
-      address: "123 banana Street"
-    });
+  document.getElementById("blueBtn").onclick = () => {
+    setActiveBtn("blueBtn");
+    applyFilter("resource");
+  };
 
-    const wrap2 = document.createElement('div');
-    const m2 = document.createElement('div');
-    m2.className = "marker";
-    m2.style.backgroundImage = "url('./img4.png')";
-    wrap2.appendChild(m2);
+  document.getElementById("yellowBtn").onclick = () => {
+    setActiveBtn("yellowBtn");
+    applyFilter("kit");
+  };
 
-    addHoverMarker({
-      lngLat: [-73.88513, 40.75890],
-      element: wrap2,
-      title: 'Place four',
-      type: 'resource',
-      address: "123 banana Street"
-    });
+  applyFilter("all");
+</script>
 
-    // ---------------------------
-    // FILTER BUTTONS
-    // ---------------------------
-    const purpleBtn = document.getElementById('purpleBtn');
-    const redBtn = document.getElementById('redBtn');
-    const blueBtn = document.getElementById('blueBtn');
-    const yellowBtn = document.getElementById('yellowBtn'); // ✅
-
-    purpleBtn.addEventListener('click', () => {
-      setActiveBtn('purpleBtn');
-      applyFilter('all');
-    });
-
-    redBtn.addEventListener('click', () => {
-      setActiveBtn('redBtn');
-      applyFilter('partner');
-    });
-
-    blueBtn.addEventListener('click', () => {
-      setActiveBtn('blueBtn');
-      applyFilter('resource');
-    });
-
-    // ✅ kits filter
-    yellowBtn.addEventListener('click', () => {
-      setActiveBtn('yellowBtn');
-      applyFilter('kit');
-    });
-
-    applyFilter('all');
-
-    map.on('style.load', () => {
-      map.setFog({});
-    });
-  </script>
 </body>
 </html>
