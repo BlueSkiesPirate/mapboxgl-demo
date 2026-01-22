@@ -27,9 +27,27 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
+      - name: Verify placeholder exists (pre-inject)
+        run: |
+          if grep -q "__MAPBOX_TOKEN__" index.html; then
+            echo "✅ Placeholder found in index.html"
+          else
+            echo "❌ Placeholder NOT found in index.html"
+            exit 1
+          fi
+
       - name: Inject MAPBOX_API_KEY
         run: |
           sed -i "s|__MAPBOX_TOKEN__|${{ secrets.MAPBOX_API_KEY }}|g" index.html
+
+      - name: Verify injection happened (post-inject)
+        run: |
+          if grep -q "__MAPBOX_TOKEN__" index.html; then
+            echo "❌ Placeholder still present (inject failed)"
+            exit 1
+          else
+            echo "✅ Placeholder removed"
+          fi
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
