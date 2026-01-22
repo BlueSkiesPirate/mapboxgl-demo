@@ -29,12 +29,12 @@ jobs:
 
       - name: Inject MAPBOX_API_KEY
         run: |
-          sed -i "s/pk\.eyJ[^\"]*/${{ secrets.MAPBOX_API_KEY }}/g" mapboxgl-demo/index.html
+          sed -i "s/pk\.eyJ[^\"]*/${{ secrets.MAPBOX_API_KEY }}/g" index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'mapboxgl-demo'
+          path: "mapboxgl-demo"
 
       - name: Deploy to GitHub Pages
         id: deployment
